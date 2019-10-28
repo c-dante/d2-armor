@@ -22,7 +22,11 @@
     "**/*.css"
   ],
   "dependencies": {
-    "lodash": "^4.17.15"
+    "crossfilter2": "^1.4.7",
+    "d3": "^5.12.0",
+    "dc": "^3.1.6",
+    "lodash": "^4.17.15",
+    "papaparse": "^5.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
