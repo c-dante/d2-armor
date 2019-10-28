@@ -1,6 +1,2 @@
-# web
-Fresh start at a web base
-
-# features
-* webpack v4 script to build assets.
-
+# d2-armor
+Destiny 2 Armor 2.0 searching and visualizing
