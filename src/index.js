@@ -17,8 +17,14 @@ elt.innerHTML = pugTpl();
 document.body.appendChild(elt);
 
 const attributes = ['Recovery', 'Resilience', 'Strength', 'Intellect', 'Mobility', 'Discipline'];
-const desc = ['Power', 'Total', 'Type', 'Equippable', 'Name'];
+const desc = ['Power', 'Type', 'Equippable', 'Name'];
 const classItem = new Set(['Titan Mark', 'Warlock Bond', 'Hunter Cloak']);
+
+window.headerClick = (d) => {
+	console.debug(d);
+};
+
+let unsub = () => {};
 
 const displayResults = (results) => {
 	// Clear everything
@@ -33,12 +39,21 @@ const displayResults = (results) => {
 		return x.Type;
 	});
 	const classDim = dims.dimension(x => x.Equippable);
-	const powerDim = dims.dimension(x => +x.Power);
+	const powerDim = dims.dimension(x => x.Power);
+	const totalDim = dims.dimension(x => x.Total);
 
-	dc.dataTable('.data-table')
-		.columns(desc.concat(attributes))
+	const table = dc.dataTable('.data-table')
+		.columns(desc.concat(attributes, 'Total'))
 		.size(Infinity)
 		.dimension(powerDim);
+
+	table._doColumnValueFormat = (v, d) => {
+		return `<span data-value="${Math.floor(d[v] / 10)}">${d[v]}</span>`;
+	};
+
+	table._doColumnHeaderFormat = (d) => {
+		return `<button onclick="headerClick('${d}')">${d}</button>`;
+	};
 
 	dc.barChart('.type-bars')
 		.width(600)
@@ -75,6 +90,19 @@ const displayResults = (results) => {
 	const attrMax = dims.allFiltered().reduce((acc, x) => {
 		return Math.max(acc, ...attributes.map(attr => x[attr]));
 	}, 0);
+
+	const totalExtent = d3.extent(dims.allFiltered(), x => x.Total);
+
+	dc.barChart('.total-bars')
+		.x(d3.scaleLinear().domain(totalExtent).nice())
+		.xAxisLabel('Total')
+		.yAxisLabel('Count')
+		.barPadding(0.1)
+		.outerPadding(0.5)
+		.elasticY(true)
+		.dimension(totalDim)
+		.group(totalDim.group().reduceCount());
+
 	attributes.forEach(attr => {
 		const attrDim = dims.dimension(x => +x[attr]);
 		const attrScale = d3.scaleLinear().domain([0, attrMax]).nice();
@@ -87,6 +115,9 @@ const displayResults = (results) => {
 	});
 
 	dc.renderAll();
+
+	unsub();
+	unsub = dims.onChange(x => console.log(x));
 };
 
 document.getElementById('file-input').addEventListener('input', (e) => {
