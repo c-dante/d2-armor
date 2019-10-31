@@ -7,13 +7,19 @@ import dc from 'dc';
 import crossfilter from 'crossfilter2';
 import * as d3 from 'd3';
 
-console.debug({ dc, crossfilter, d3 })
+import * as api from './api';
+
+// On load, read code and state params
+
+console.debug({ dc, crossfilter, d3 });
 dc.config.defaultColors(d3.schemeCategory10);
 
 // Templates with pug
 import pugTpl from './main.tpl.pug';
 const elt = document.createElement('div');
-elt.innerHTML = pugTpl();
+elt.innerHTML = pugTpl({
+	authUrl: api.getAuthUrl(),
+});
 document.body.appendChild(elt);
 
 const attributes = ['Recovery', 'Resilience', 'Strength', 'Intellect', 'Mobility', 'Discipline'];

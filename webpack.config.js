@@ -175,6 +175,7 @@ module.exports = ({
 			publicPath: '/',
 			contentBase: './src',
 			hot: true,
+			https: true,
 			// This is configured to allow client side cors request to some other server
 			// @see: https://webpack.js.org/configuration/dev-server/#devserver-proxy
 			proxy: {
